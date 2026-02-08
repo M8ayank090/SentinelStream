@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: audit-service
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: jdbc:postgresql://postgres:5432/sentinelstream
+    username: postgres
+    password: postgres
+    driverClassName: org.postgresql.Driver
+  kafka:
+    bootstrap-servers: kafka:9092
+    consumer:
+      group-id: audit-service
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
+server:
+  port: 8087
+
+logging:
+  level:
+    root: INFO
+    com.sentinelstream: DEBUG

@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: auth-service
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: jdbc:postgresql://postgres:5432/sentinelstream
+    username: postgres
+    password: postgres
+    driverClassName: org.postgresql.Driver
+
+jwt:
+  secret: "SentinelStreamSecretKeyFor256BitHMACHS256EncryptionRequired"
+  expiration: 86400000
+
+server:
+  port: 8081
+
+logging:
+  level:
+    root: INFO
+    com.sentinelstream: DEBUG

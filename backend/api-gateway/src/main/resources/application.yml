@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: http://auth-service:8081
+          predicates:
+            - Path=/api/v1/auth/**
+          filters:
+            - RewritePath=/api/v1/auth(?<segment>.*), /api$\{segment}
+
+        - id: ingestion-service
+          uri: http://ingestion-service:8082
+          predicates:
+            - Path=/api/v1/logs/**
+          filters:
+            - RewritePath=/api/v1/logs(?<segment>.*), /api$\{segment}
+
+        - id: alert-service
+          uri: http://alert-service:8086
+          predicates:
+            - Path=/api/v1/alerts/**
+          filters:
+            - RewritePath=/api/v1/alerts(?<segment>.*), /api$\{segment}
+
+        - id: audit-service
+          uri: http://audit-service:8087
+          predicates:
+            - Path=/api/v1/audit/**
+          filters:
+            - RewritePath=/api/v1/audit(?<segment>.*), /api$\{segment}
+
+jwt:
+  secret: "SentinelStreamSecretKeyFor256BitHMACHS256EncryptionRequired"
+  expiration: 86400000
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    com.sentinelstream: DEBUG
