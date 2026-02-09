@@ -1,0 +1,8 @@
+com\sentinelstream\alert\controller\AlertController.class
+com\sentinelstream\alert\service\AlertService.class
+com\sentinelstream\alert\entity\Alert$AlertBuilder.class
+com\sentinelstream\alert\kafka\AlertConsumer.class
+com\sentinelstream\alert\repository\AlertRepository.class
+com\sentinelstream\alert\entity\Alert.class
+com\sentinelstream\alert\AlertServiceApplication.class
+com\sentinelstream\alert\config\KafkaConfig.class
