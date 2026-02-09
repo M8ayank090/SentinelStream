@@ -73,8 +73,7 @@ Postgres  Elastic  ML Service
 ### Local Development with Docker Compose
 
 ```bash
-cd deployment
-docker-compose up -d
+docker compose up -d
 ```
 
 Services will be available at:

@@ -8,17 +8,32 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   datasource:
-    url: jdbc:postgresql://postgres:5432/sentinelstream
-    username: postgres
-    password: postgres
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/sentinelstream}
+    username: ${SPRING_DATASOURCE_USERNAME:sentinelstream}
+    password: ${SPRING_DATASOURCE_PASSWORD:sentinelstream}
     driverClassName: org.postgresql.Driver
 
 jwt:
-  secret: "SentinelStreamSecretKeyFor256BitHMACHS256EncryptionRequired"
-  expiration: 86400000
+  secret: ${JWT_SECRET:SentinelStreamSecretKeyFor256BitHMACHS256EncryptionRequired}
+  expiration: ${JWT_EXPIRATION_MS:86400000}
 
 server:
-  port: 8081
+  port: ${SERVER_PORT:8081}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
 
 logging:
   level:

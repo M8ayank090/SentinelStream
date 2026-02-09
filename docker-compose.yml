@@ -77,6 +77,141 @@ services:
       timeout: 5s
       retries: 5
 
+  api-gateway:
+    build:
+      context: .
+      dockerfile: deployment/docker/Dockerfile.backend
+      args:
+        SERVICE_DIR: api-gateway
+    environment:
+      SERVER_PORT: 8080
+      AUTH_SERVICE_URL: http://auth-service:8081
+      INGESTION_SERVICE_URL: http://ingestion-service:8082
+      ALERT_SERVICE_URL: http://alert-service:8086
+      AUDIT_SERVICE_URL: http://audit-service:8087
+      JWT_SECRET: SentinelStreamSecretKeyFor256BitHMACHS256EncryptionRequired
+      JWT_EXPIRATION_MS: 86400000
+    depends_on:
+      - auth-service
+      - ingestion-service
+      - alert-service
+      - audit-service
+    ports:
+      - "8080:8080"
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: deployment/docker/Dockerfile.backend
+      args:
+        SERVICE_DIR: auth-service
+    environment:
+      SERVER_PORT: 8081
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/sentinelstream
+      SPRING_DATASOURCE_USERNAME: sentinelstream
+      SPRING_DATASOURCE_PASSWORD: sentinelstream
+      JWT_SECRET: SentinelStreamSecretKeyFor256BitHMACHS256EncryptionRequired
+      JWT_EXPIRATION_MS: 86400000
+    depends_on:
+      - postgres
+
+  ingestion-service:
+    build:
+      context: .
+      dockerfile: deployment/docker/Dockerfile.backend
+      args:
+        SERVICE_DIR: ingestion-service
+    environment:
+      SERVER_PORT: 8082
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      - kafka
+
+  enrichment-service:
+    build:
+      context: .
+      dockerfile: deployment/docker/Dockerfile.backend
+      args:
+        SERVICE_DIR: enrichment-service
+    environment:
+      SERVER_PORT: 8083
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      - kafka
+
+  detection-service:
+    build:
+      context: .
+      dockerfile: deployment/docker/Dockerfile.backend
+      args:
+        SERVICE_DIR: detection-service
+    environment:
+      SERVER_PORT: 8085
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      - kafka
+
+  indexer-service:
+    build:
+      context: .
+      dockerfile: deployment/docker/Dockerfile.backend
+      args:
+        SERVICE_DIR: indexer-service
+    environment:
+      SERVER_PORT: 8084
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      ELASTICSEARCH_HOST: elasticsearch
+      ELASTICSEARCH_PORT: 9200
+    depends_on:
+      - kafka
+      - elasticsearch
+
+  alert-service:
+    build:
+      context: .
+      dockerfile: deployment/docker/Dockerfile.backend
+      args:
+        SERVICE_DIR: alert-service
+    environment:
+      SERVER_PORT: 8086
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/sentinelstream
+      SPRING_DATASOURCE_USERNAME: sentinelstream
+      SPRING_DATASOURCE_PASSWORD: sentinelstream
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      - postgres
+      - kafka
+
+  audit-service:
+    build:
+      context: .
+      dockerfile: deployment/docker/Dockerfile.backend
+      args:
+        SERVICE_DIR: audit-service
+    environment:
+      SERVER_PORT: 8087
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/sentinelstream
+      SPRING_DATASOURCE_USERNAME: sentinelstream
+      SPRING_DATASOURCE_PASSWORD: sentinelstream
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      - postgres
+      - kafka
+
+  ml-anomaly-service:
+    build:
+      context: ./ml-service
+    ports:
+      - "8088:8088"
+
+  frontend:
+    build:
+      context: ./frontend
+    depends_on:
+      - api-gateway
+    ports:
+      - "3000:80"
+
 volumes:
   postgres_data:
   kafka_data:

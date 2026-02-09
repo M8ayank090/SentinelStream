@@ -1,0 +1,20 @@
+FROM maven:3.9.7-eclipse-temurin-17 AS build
+
+WORKDIR /workspace
+
+ARG SERVICE_DIR
+
+COPY backend ./backend
+
+RUN mvn -f backend/common-lib/pom.xml -DskipTests install
+RUN mvn -f backend/${SERVICE_DIR}/pom.xml -DskipTests package
+
+FROM eclipse-temurin:17-jre
+
+WORKDIR /app
+
+COPY --from=build /workspace/backend/${SERVICE_DIR}/target/*.jar /app/app.jar
+
+ENV JAVA_OPTS=""
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]
