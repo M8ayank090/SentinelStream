@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: indexer-service
+  kafka:
+    bootstrap-servers: kafka:9092
+    consumer:
+      group-id: indexer-service
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
+elasticsearch:
+  host: elasticsearch
+  port: 9200
+
+logging:
+  level:
+    root: INFO
+    com.sentinelstream: DEBUG

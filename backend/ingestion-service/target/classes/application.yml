@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: ingestion-service
+  kafka:
+    bootstrap-servers: kafka:9092
+    producer:
+      acks: all
+      retries: 3
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+server:
+  port: 8082
+
+logging:
+  level:
+    root: INFO
+    com.sentinelstream: DEBUG
