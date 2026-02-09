@@ -1,8 +1,8 @@
-# 🔐 SentinelStream - Real-Time Log Analytics & Threat Detection Platform
+# SentinelStream - Real-Time Log Analytics & Threat Detection Platform
 
-A production-grade SIEM-like platform built with modern microservices architecture. Ingests logs at high volume, processes them in real-time, detects suspicious patterns using rules + ML anomaly detection, and provides a comprehensive dashboard for search and alerts.
+A production-grade SIEM-like platform built with modern microservices architecture. Ingests logs at high volume, processes them in real time, detects suspicious patterns using rules + ML anomaly detection, and provides a comprehensive dashboard for search and alerts.
 
-## 🎯 Key Features
+## Key Features
 
 - **Real-Time Log Ingestion**: High-throughput log pipeline with validation
 - **Advanced Threat Detection**: Rule-based + ML-powered anomaly detection
@@ -13,35 +13,36 @@ A production-grade SIEM-like platform built with modern microservices architectu
 - **Scalable Architecture**: Kafka-based event streaming, stateless microservices
 - **Cloud-Ready**: Docker Compose for local dev, Kubernetes manifests for production
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                  React TypeScript Dashboard                  │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-┌──────────────────────────▼──────────────────────────────────┐
-│                    API Gateway (Spring Boot)                 │
-│              - Routing, Auth, Rate Limiting                  │
-└┬───────┬───────┬────────┬──────────┬────────────┬───────────┬┘
- │       │       │        │          │            │           │
- ▼       ▼       ▼        ▼          ▼            ▼           ▼
-Auth   Ingest  Alert   Audit    Detection    Enrichment   Indexer
-Service Service Service Service  Service      Service     Service
- │       │       │        │          │            │           │
- └───────┴───┬───┴────────┴──────────┴────────────┴────────────┘
-             │
-      ┌──────▼──────┐
-      │    Kafka    │  (logs.raw → logs.enriched → alerts.generated)
-      └──────┬──────┘
-             │
-    ┌────────┼────────┐
-    ▼        ▼        ▼
-Postgres  Elastic  ML Service
-          Search   (Python FastAPI)
++--------------------------------------------------------------+
+|                  React TypeScript Dashboard                  |
++-----------------------------+--------------------------------+
+                              |
++-----------------------------v--------------------------------+
+|                    API Gateway (Spring Boot)                 |
+|              - Routing, Auth, Rate Limiting                  |
++--------+--------+--------+---------+-----------+-------------+
+ |       |        |        |         |           |             |
+ v       v        v        v         v           v             v
+Auth   Ingest   Alert    Audit   Detection   Enrichment     Indexer
+Service Service Service Service   Service     Service       Service
+ |       |        |        |         |           |             |
+ +-------+--------+--------+---------+-----------+-------------+
+             |
+      +------+------+
+      |    Kafka    |  (logs.raw -> logs.enriched -> alerts.generated)
+      +------+------+
+             |
+    +--------+---------+---------+
+    |                  |         |
+    v                  v         v
+Postgres           Elasticsearch  ML Service
+                              (Python FastAPI)
 ```
 
-## 🧩 Microservices
+## Microservices
 
 | Service | Port | Purpose |
 |---------|------|---------|
@@ -55,14 +56,14 @@ Postgres  Elastic  ML Service
 | audit-service | 8087 | Audit trail logging |
 | ml-anomaly-service | 8088 | FastAPI service for ML scoring |
 
-## 🧬 Kafka Topics
+## Kafka Topics
 
 - `logs.raw`: Raw inbound logs
 - `logs.enriched`: Enriched logs ready for indexing
 - `alerts.generated`: Generated security alerts
 - `audit.events`: Audit trail events
 
-## ⚡ Quick Start
+## Quick Start
 
 ### Prerequisites
 - Docker & Docker Compose
@@ -80,7 +81,7 @@ Services will be available at:
 - API Gateway: http://localhost:8080
 - Dashboard: http://localhost:3000
 - Elasticsearch: http://localhost:9200
-- Kafka UI: http://localhost:8081
+- Kafka: localhost:9092
 
 ### Development Setup
 
@@ -100,11 +101,11 @@ npm install
 npm run dev
 ```
 
-## 📊 Database Schema
+## Database Schema
 
 See `docs/database_schema.md` for PostgreSQL schema and `docs/elastic_mappings.md` for Elasticsearch mappings.
 
-## 🔒 Security Features
+## Security Features
 
 - JWT token-based authentication
 - Role-based access control
@@ -113,7 +114,7 @@ See `docs/database_schema.md` for PostgreSQL schema and `docs/elastic_mappings.m
 - Complete audit trail
 - Input sanitization across all services
 
-## 📈 Scaling
+## Scaling
 
 - **Horizontal Scale**: Run multiple instances of each microservice
 - **Kafka Partitioning**: 10 partitions per topic for parallel processing
@@ -121,15 +122,16 @@ See `docs/database_schema.md` for PostgreSQL schema and `docs/elastic_mappings.m
 - **Connection Pooling**: HikariCP for database connections
 - **Caching**: Redis for frequent queries (optional)
 
-## 📚 Documentation
+## Documentation
 
 - [Architecture & Design](docs/architecture.md)
 - [API Documentation](docs/api_docs.md)
 - [Kafka Events Schema](docs/kafka_events.md)
 - [Elasticsearch Mappings](docs/elastic_mappings.md)
 - [Deployment Guide](docs/deployment.md)
+- [Kubernetes Deployment](deployment/k8s/README.md)
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Run all tests
@@ -142,11 +144,11 @@ mvn verify -pl backend
 cd frontend && npm test
 ```
 
-## 📝 License
+## License
 
 MIT License - See LICENSE file
 
-## 🤝 Contributing
+## Contributing
 
 1. Feature branches: `feature/feature-name`
 2. Bug fixes: `fix/bug-description`
@@ -154,4 +156,4 @@ MIT License - See LICENSE file
 
 ---
 
-Built with ❤️ for security teams | Production-ready SIEM alternative
+Built for security teams | Production-ready SIEM alternative
